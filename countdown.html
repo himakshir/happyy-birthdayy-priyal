@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Counting down to Priyal’s special day</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#fff7f2;       /* earlier soft gradient background */
+    --bg2:#ffe3ec;
+    --panel:#fde8ee;
+    --hot:#ff5f8f;
+    --text:#3b1b1f;
+    --muted:#8b5a61;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg, var(--bg1), var(--bg2));
+    font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    color:var(--text);
+  }
+  .page{
+    width:min(980px, 94vw);
+    padding:28px 18px 36px;
+    text-align:center;
+  }
+  .heading{
+    margin:6px 0 22px;
+  }
+  .heading h1{
+    font-family:"Playfair Display", serif;
+    font-size:clamp(28px, 4vw, 44px);
+    margin:0 0 8px;
+    letter-spacing:.3px;
+  }
+  .heading .name{color:var(--hot);}
+  .heading .sub{
+    font-size:14px;
+    color:var(--muted);
+  }
+
+  .panel{
+    background:var(--panel);
+    border-radius:26px;
+    padding:28px 18px 30px;
+    box-shadow:0 20px 40px rgba(0,0,0,.15);
+  }
+
+  .timer{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+    max-width:520px;
+    margin:0 auto 14px;
+  }
+  .box{
+    background:linear-gradient(180deg,#fff,#ffe3ea);
+    border-radius:18px;
+    padding:18px 10px 14px;
+    box-shadow:0 10px 20px rgba(255,95,143,.25);
+    border:1px solid #ffd0dc;
+  }
+  .num{
+    display:block;
+    font-size:32px;
+    font-weight:800;
+    color:var(--hot);
+    line-height:1;
+  }
+  .lbl{
+    font-size:12px;
+    letter-spacing:.4px;
+    color:#9a5b66;
+    margin-top:6px;
+  }
+
+  .note{
+    margin:10px 0 18px;
+    color:#a54a61;
+    font-size:13px;
+  }
+
+  .btn{
+    appearance:none;
+    border:none;
+    border-radius:999px;
+    padding:14px 28px;
+    font-weight:700;
+    color:#fff;
+    background:linear-gradient(135deg,#ff9fba,#ff5f8f);
+    box-shadow:0 14px 26px rgba(255,95,143,.35);
+    cursor:pointer;
+  }
+  .btn[disabled]{
+    opacity:.5;
+    cursor:not-allowed;
+    box-shadow:none;
+  }
+</style>
+</head>
+<body>
+
+  <div class="page">
+    <div class="heading">
+      <h1>Counting down to <span class="name">Priyal’s</span> special day</h1>
+      <div class="sub">You mean more than the words can explain 💗</div>
+    </div>
+
+    <div class="panel">
+      <div class="timer">
+        <div class="box"><span class="num" id="d">00</span><div class="lbl">DAYS</div></div>
+        <div class="box"><span class="num" id="h">00</span><div class="lbl">HOURS</div></div>
+        <div class="box"><span class="num" id="m">00</span><div class="lbl">MINUTES</div></div>
+        <div class="box"><span class="num" id="s">00</span><div class="lbl">SECONDS</div></div>
+      </div>
+
+      <div class="note">A special celebration awaits you at midnight ✨</div>
+      <button id="goBtn" class="btn" disabled>Let’s Celebrate</button>
+    </div>
+  </div>
+
+<script>
+  const target = new Date("2026-03-03T00:00:00"); // 3rd March 2026, 12:00 AM
+
+  const dEl = document.getElementById('d');
+  const hEl = document.getElementById('h');
+  const mEl = document.getElementById('m');
+  const sEl = document.getElementById('s');
+  const goBtn = document.getElementById('goBtn');
+
+  function tick(){
+    const now = new Date();
+    const diff = Math.max(0, target - now);
+
+    const d = Math.floor(diff / (1000*60*60*24));
+    const h = Math.floor((diff / (1000*60*60)) % 24);
+    const m = Math.floor((diff / (1000*60)) % 60);
+    const s = Math.floor((diff / 1000) % 60);
+
+    dEl.textContent = String(d).padStart(2,'0');
+    hEl.textContent = String(h).padStart(2,'0');
+    mEl.textContent = String(m).padStart(2,'0');
+    sEl.textContent = String(s).padStart(2,'0');
+
+    if(diff === 0){
+      goBtn.disabled = false;
+      goBtn.onclick = () => location.href = "slide1.html";
+    }
+  }
+  setInterval(tick, 1000);
+  tick();
+</script>
+
+</body>
+</html>
