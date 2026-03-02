@@ -16,7 +16,6 @@
     --text:#7a3b4a;
   }
 
-  *{box-sizing:border-box}
   body{
     margin:0;
     min-height:100vh;
@@ -24,7 +23,7 @@
     align-items:center;
     justify-content:center;
     background:linear-gradient(135deg, var(--bg1), var(--bg2));
-    font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    font-family:Inter, system-ui, sans-serif;
     color:var(--text);
   }
 
@@ -36,21 +35,25 @@
   }
 
   h1{
-    margin-bottom:16px;
+    margin-bottom:14px;
     font-size:22px;
     font-weight:700;
   }
 
+  .board-wrap{
+    position:relative;
+    margin:0 auto 16px;
+    width:280px;
+  }
+
   .board{
-    background:var(--panel);
+    background:#fff;
     border-radius:20px;
     padding:16px;
     box-shadow:0 20px 40px rgba(0,0,0,.15);
     display:grid;
     grid-template-columns:repeat(3, 1fr);
     gap:12px;
-    margin:0 auto 18px;
-    width:280px;
   }
 
   .cell{
@@ -65,15 +68,25 @@
     cursor:pointer;
     box-shadow:0 8px 18px rgba(255,95,143,.25);
     border:2px solid var(--soft);
-    transition:.15s ease;
-  }
-
-  .cell:hover{
-    transform:scale(1.04);
   }
 
   .x{ color:#ff5f8f; }
   .o{ color:#ff9fba; }
+
+  .line{
+    position:absolute;
+    height:6px;
+    background:#ff5f8f;
+    border-radius:6px;
+    transform-origin:left center;
+    display:none;
+  }
+
+  .win-text{
+    font-weight:700;
+    margin:10px 0;
+    display:none;
+  }
 
   .controls{
     display:flex;
@@ -82,7 +95,6 @@
   }
 
   button{
-    appearance:none;
     border:none;
     border-radius:999px;
     padding:10px 22px;
@@ -102,76 +114,105 @@
 </head>
 <body>
 
-  <div class="wrap">
-    <h1>Tic Tac Toe</h1>
+<div class="wrap">
+  <h1>Beat Me to Unlock 🎮</h1>
 
+  <div class="board-wrap">
     <div class="board" id="board"></div>
-
-    <div class="controls">
-      <button id="restart">Restart</button>
-      <button id="nextBtn" disabled>Next</button>
-    </div>
+    <div class="line" id="winLine"></div>
   </div>
+
+  <div class="win-text" id="winText">You won! 🎉</div>
+
+  <div class="controls">
+    <button id="restart">Restart</button>
+    <button id="nextBtn" disabled>Next</button>
+  </div>
+</div>
 
 <script>
   const board = document.getElementById("board");
-  const restartBtn = document.getElementById("restart");
+  const winLine = document.getElementById("winLine");
+  const winText = document.getElementById("winText");
   const nextBtn = document.getElementById("nextBtn");
+  const restartBtn = document.getElementById("restart");
 
-  let cells = [];
-  let current = "X";
+  let cells = Array(9).fill("");
   let gameOver = false;
+
+  const wins = [
+    [0,1,2, 0, 40, 0],
+    [3,4,5, 0, 120, 0],
+    [6,7,8, 0, 200, 0],
+    [0,3,6, -40, 120, 90],
+    [1,4,7, 40, 120, 90],
+    [2,5,8, 120, 120, 90],
+    [0,4,8, -10, 20, 45],
+    [2,4,6, -10, 220, -45]
+  ];
 
   function createBoard(){
     board.innerHTML = "";
-    cells = [];
-    current = "X";
+    cells = Array(9).fill("");
     gameOver = false;
+    winLine.style.display = "none";
+    winText.style.display = "none";
     nextBtn.disabled = true;
 
-    for(let i = 0; i < 9; i++){
+    for(let i=0;i<9;i++){
       const cell = document.createElement("div");
       cell.className = "cell";
-      cell.addEventListener("click", () => play(cell, i));
+      cell.onclick = () => playerMove(i, cell);
       board.appendChild(cell);
-      cells.push("");
     }
   }
 
-  function play(cell, i){
+  function playerMove(i, cell){
     if(cells[i] || gameOver) return;
+    cells[i] = "X";
+    cell.textContent = "X";
+    cell.classList.add("x");
 
-    cells[i] = current;
-    cell.textContent = current;
-    cell.classList.add(current.toLowerCase());
+    if(checkWin("X")) return;
 
-    if(checkWin()){
-      gameOver = true;
-      nextBtn.disabled = false;
-      return;
-    }
-
-    current = current === "X" ? "O" : "X";
+    setTimeout(computerMove, 400);
   }
 
-  function checkWin(){
-    const wins = [
-      [0,1,2],[3,4,5],[6,7,8],
-      [0,3,6],[1,4,7],[2,5,8],
-      [0,4,8],[2,4,6]
-    ];
+  function computerMove(){
+    if(gameOver) return;
 
-    return wins.some(w => {
-      const [a,b,c] = w;
-      return cells[a] && cells[a] === cells[b] && cells[a] === cells[c];
-    });
+    const empty = cells.map((v,i)=>v===""?i:null).filter(v=>v!==null);
+    if(empty.length === 0) return;
+
+    const move = empty[Math.floor(Math.random()*empty.length)];
+    cells[move] = "O";
+    board.children[move].textContent = "O";
+    board.children[move].classList.add("o");
+  }
+
+  function checkWin(player){
+    for(const [a,b,c, x, y, r] of wins){
+      if(cells[a]===player && cells[b]===player && cells[c]===player){
+        gameOver = true;
+        drawLine(x, y, r);
+        winText.style.display = "block";
+        nextBtn.disabled = false;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function drawLine(x, y, r){
+    winLine.style.display = "block";
+    winLine.style.width = "260px";
+    winLine.style.left = x + "px";
+    winLine.style.top = y + "px";
+    winLine.style.transform = `rotate(${r}deg)`;
   }
 
   restartBtn.onclick = createBoard;
-
-  nextBtn.onclick = () => {
-    location.href = "slide2.html";
-  };
+  nextBtn.onclick = () => location.href = "slide2.html";
 
   createBoard();
 </script>
