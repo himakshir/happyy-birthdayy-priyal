@@ -87,7 +87,7 @@
     height:6px;
     background:#ff5f8f;
     border-radius:6px;
-    transform-origin:left center;
+    transform-origin:0 50%;
     display:none;
   }
 
@@ -148,19 +148,19 @@
   const nextBtn = document.getElementById("nextBtn");
   const restartBtn = document.getElementById("restart");
 
-  let cells = Array(9).fill("");
-  let gameOver = false;
-  let isPlayerTurn = true;
+  let cells;
+  let gameOver;
+  let isPlayerTurn;
 
   const wins = [
-    [0,1,2, 0, 40, 0],
-    [3,4,5, 0, 120, 0],
-    [6,7,8, 0, 200, 0],
-    [0,3,6, -40, 120, 90],
-    [1,4,7, 40, 120, 90],
-    [2,5,8, 120, 120, 90],
-    [0,4,8, -10, 20, 45],
-    [2,4,6, -10, 220, -45]
+    [0,1,2],
+    [3,4,5],
+    [6,7,8],
+    [0,3,6],
+    [1,4,7],
+    [2,5,8],
+    [0,4,8],
+    [2,4,6]
   ];
 
   function createBoard(){
@@ -190,29 +190,53 @@
 
     if(checkWin("X")) return;
 
-    setTimeout(computerMove, 450);
+    setTimeout(computerMove, 400);
   }
 
   function computerMove(){
     if(gameOver) return;
 
-    const empty = cells.map((v,i)=>v===""?i:null).filter(v=>v!==null);
+    let empty = cells.map((v,i)=>v===""?i:null).filter(v=>v!==null);
     if(empty.length === 0) return;
 
-    // Computer intentionally plays random (easy to beat)
+    // Remove computer winning moves intentionally
+    empty = empty.filter(index => {
+      cells[index] = "O";
+      const win = checkTemporaryWin("O");
+      cells[index] = "";
+      return !win; // remove if it causes win
+    });
+
+    // If all remaining moves were winning moves (rare case), allow random
+    if(empty.length === 0){
+      empty = cells.map((v,i)=>v===""?i:null).filter(v=>v!==null);
+    }
+
     const move = empty[Math.floor(Math.random()*empty.length)];
+
     cells[move] = "O";
     board.children[move].textContent = "O";
     board.children[move].classList.add("o");
 
+    // Still check win (in case forced)
+    if(checkWin("O")) return;
+
     isPlayerTurn = true;
   }
 
+  function checkTemporaryWin(player){
+    return wins.some(([a,b,c]) =>
+      cells[a]===player && cells[b]===player && cells[c]===player
+    );
+  }
+
   function checkWin(player){
-    for(const [a,b,c, x, y, r] of wins){
+    for(const combo of wins){
+      const [a,b,c] = combo;
+
       if(cells[a]===player && cells[b]===player && cells[c]===player){
         gameOver = true;
-        drawLine(x, y, r);
+        drawLineBetween(a, c);
         winText.style.display = "block";
         nextBtn.disabled = false;
         return true;
@@ -221,12 +245,28 @@
     return false;
   }
 
-  function drawLine(x, y, r){
+  function drawLineBetween(startIndex, endIndex){
+    const startCell = board.children[startIndex];
+    const endCell = board.children[endIndex];
+
+    const boardRect = board.getBoundingClientRect();
+    const startRect = startCell.getBoundingClientRect();
+    const endRect = endCell.getBoundingClientRect();
+
+    const startX = startRect.left + startRect.width/2 - boardRect.left;
+    const startY = startRect.top + startRect.height/2 - boardRect.top;
+
+    const endX = endRect.left + endRect.width/2 - boardRect.left;
+    const endY = endRect.top + endRect.height/2 - boardRect.top;
+
+    const length = Math.hypot(endX - startX, endY - startY);
+    const angle = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI;
+
     winLine.style.display = "block";
-    winLine.style.width = "260px";
-    winLine.style.left = x + "px";
-    winLine.style.top = y + "px";
-    winLine.style.transform = `rotate(${r}deg)`;
+    winLine.style.width = length + "px";
+    winLine.style.left = startX + "px";
+    winLine.style.top = startY + "px";
+    winLine.style.transform = `rotate(${angle}deg)`;
   }
 
   restartBtn.onclick = createBoard;
