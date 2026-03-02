@@ -95,7 +95,6 @@
     box-shadow:0 12px 22px rgba(255,95,143,.45);
   }
 
-  /* Confetti */
   .confetti{
     position:fixed;
     inset:0;
@@ -140,16 +139,24 @@
     </div>
   </div>
 
-  <div class="card">
-    <strong>Our Memories 📸</strong>
-    <div class="gallery">
-      <!-- Add your photos to GitHub in a folder called "photos" -->
-      <img src="photos/1.jpg" alt="">
-      <img src="photos/2.jpg" alt="">
-      <img src="photos/3.jpg" alt="">
-      <img src="photos/4.jpg" alt="">
-    </div>
+<div class="card">
+  <strong>Our Memories 📸</strong>
+  <div class="gallery">
+    <img src="photos/1.jpg" alt="">
+    <img src="photos/2.jpg" alt="">
+    <img src="photos/3.jpg" alt="">
+    <img src="photos/4.jpg" alt="">
+    <img src="photos/5.jpg" alt="">
+    <img src="photos/6.jpg" alt="">
+    <img src="photos/7.jpg" alt="">
+    <img src="photos/8.jpg" alt="">
+    <img src="photos/9.jpg" alt="">
+    <img src="photos/10.jpg" alt="">
+    <img src="photos/11.jpg" alt="">
+    <img src="photos/12.jpg" alt="">
+    <img src="photos/13.jpg" alt="">
   </div>
+</div>
 
   <div class="controls">
     <button id="playMusic">Play music 🎵</button>
@@ -157,12 +164,11 @@
   </div>
 </div>
 
-<audio id="music" loop>
-  <source src="music.mp3" type="audio/mpeg">
+<audio id="music" loop autoplay>
+  <source src="music.mpeg" type="audio/mpeg">
 </audio>
 
 <script>
-  // Confetti
   const confetti = document.getElementById('confetti');
   for(let i=0;i<80;i++){
     const s = document.createElement('span');
@@ -172,7 +178,6 @@
     confetti.appendChild(s);
   }
 
-  // Music
   const music = document.getElementById('music');
   document.getElementById('playMusic').onclick = () => {
     music.play();
