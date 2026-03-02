@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tic Tac Toe</title>
 
 <style>
@@ -25,7 +24,6 @@ body {
 }
 
 h1 {
-    margin-bottom: 20px;
     color: #4b2c34;
 }
 
@@ -34,6 +32,7 @@ h1 {
     grid-template-columns: repeat(3, 100px);
     gap: 10px;
     justify-content: center;
+    margin-top: 20px;
 }
 
 .cell {
@@ -47,10 +46,6 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.cell:hover {
-    background: #ffe6ec;
 }
 
 #status {
@@ -73,11 +68,8 @@ button {
 
 <div class="container">
     <h1>Tic Tac Toe</h1>
-
     <div class="board" id="board"></div>
-
     <div id="status">Your turn</div>
-
     <button onclick="resetGame()">Restart</button>
 </div>
 
@@ -86,7 +78,6 @@ const board = document.getElementById("board");
 const statusText = document.getElementById("status");
 
 let cells = [];
-let currentPlayer = "X";
 let gameActive = true;
 
 function createBoard() {
@@ -96,7 +87,6 @@ function createBoard() {
     for (let i = 0; i < 9; i++) {
         const cell = document.createElement("div");
         cell.classList.add("cell");
-        cell.dataset.index = i;
         cell.addEventListener("click", handleClick);
         board.appendChild(cell);
         cells.push(cell);
@@ -115,7 +105,7 @@ function handleClick(e) {
         gameActive = false;
 
         setTimeout(() => {
-            window.location.href = "birthday.html";
+            window.location.href = "slide3.html";
         }, 1500);
 
         return;
@@ -135,63 +125,23 @@ function computerMove() {
 
     if (emptyCells.length === 0) return;
 
-    // 50% chance computer plays random instead of best move
-    let randomChance = Math.random();
-
-    let move;
-
-    if (randomChance < 0.5) {
-        // Random move (lets user win more often)
-        move = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-    } else {
-        // Try to win or block
-        move = findBestMove("O") || findBestMove("X") || emptyCells[0];
-    }
-
+    let move = emptyCells[Math.floor(Math.random() * emptyCells.length)];
     move.textContent = "O";
 
     if (checkWinner("O")) {
         statusText.textContent = "Computer wins!";
         gameActive = false;
-        return;
     }
-
-    if (isDraw()) {
-        statusText.textContent = "Draw!";
-        gameActive = false;
-        return;
-    }
-}
-
-function findBestMove(player) {
-    const winPatterns = [
-        [0,1,2],[3,4,5],[6,7,8],
-        [0,3,6],[1,4,7],[2,5,8],
-        [0,4,8],[2,4,6]
-    ];
-
-    for (let pattern of winPatterns) {
-        let values = pattern.map(i => cells[i].textContent);
-
-        if (values.filter(v => v === player).length === 2 &&
-            values.includes("")) {
-
-            let emptyIndex = pattern[values.indexOf("")];
-            return cells[emptyIndex];
-        }
-    }
-
-    return null;
 }
 
 function checkWinner(player) {
-    const winPatterns = [
+    const patterns = [
         [0,1,2],[3,4,5],[6,7,8],
         [0,3,6],[1,4,7],[2,5,8],
         [0,4,8],[2,4,6]
     ];
 
-    return winPatterns.some(pattern =>
+    return patterns.some(pattern =>
         pattern.every(index =>
             cells[index].textContent === player
         )
