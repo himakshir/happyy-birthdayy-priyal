@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tic Tac Toe</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg1:#ffe7ee;
+    --bg2:#ffd6e2;
+    --panel:#ffffff;
+    --pink:#ff5f8f;
+    --soft:#ffd0dc;
+    --text:#7a3b4a;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg, var(--bg1), var(--bg2));
+    font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    color:var(--text);
+  }
+
+  .wrap{
+    width:100%;
+    max-width:420px;
+    text-align:center;
+    padding:20px;
+  }
+
+  h1{
+    margin-bottom:16px;
+    font-size:22px;
+    font-weight:700;
+  }
+
+  .board{
+    background:var(--panel);
+    border-radius:20px;
+    padding:16px;
+    box-shadow:0 20px 40px rgba(0,0,0,.15);
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:12px;
+    margin:0 auto 18px;
+    width:280px;
+  }
+
+  .cell{
+    background:#fff;
+    border-radius:14px;
+    height:70px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+    font-weight:800;
+    cursor:pointer;
+    box-shadow:0 8px 18px rgba(255,95,143,.25);
+    border:2px solid var(--soft);
+    transition:.15s ease;
+  }
+
+  .cell:hover{
+    transform:scale(1.04);
+  }
+
+  .x{ color:#ff5f8f; }
+  .o{ color:#ff9fba; }
+
+  .controls{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+  }
+
+  button{
+    appearance:none;
+    border:none;
+    border-radius:999px;
+    padding:10px 22px;
+    font-weight:700;
+    cursor:pointer;
+    color:#fff;
+    background:linear-gradient(135deg,#ff9fba,#ff5f8f);
+    box-shadow:0 12px 22px rgba(255,95,143,.35);
+  }
+
+  button[disabled]{
+    opacity:.5;
+    box-shadow:none;
+    cursor:not-allowed;
+  }
+</style>
+</head>
+<body>
+
+  <div class="wrap">
+    <h1>Tic Tac Toe</h1>
+
+    <div class="board" id="board"></div>
+
+    <div class="controls">
+      <button id="restart">Restart</button>
+      <button id="nextBtn" disabled>Next</button>
+    </div>
+  </div>
+
+<script>
+  const board = document.getElementById("board");
+  const restartBtn = document.getElementById("restart");
+  const nextBtn = document.getElementById("nextBtn");
+
+  let cells = [];
+  let current = "X";
+  let gameOver = false;
+
+  function createBoard(){
+    board.innerHTML = "";
+    cells = [];
+    current = "X";
+    gameOver = false;
+    nextBtn.disabled = true;
+
+    for(let i = 0; i < 9; i++){
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      cell.addEventListener("click", () => play(cell, i));
+      board.appendChild(cell);
+      cells.push("");
+    }
+  }
+
+  function play(cell, i){
+    if(cells[i] || gameOver) return;
+
+    cells[i] = current;
+    cell.textContent = current;
+    cell.classList.add(current.toLowerCase());
+
+    if(checkWin()){
+      gameOver = true;
+      nextBtn.disabled = false;
+      return;
+    }
+
+    current = current === "X" ? "O" : "X";
+  }
+
+  function checkWin(){
+    const wins = [
+      [0,1,2],[3,4,5],[6,7,8],
+      [0,3,6],[1,4,7],[2,5,8],
+      [0,4,8],[2,4,6]
+    ];
+
+    return wins.some(w => {
+      const [a,b,c] = w;
+      return cells[a] && cells[a] === cells[b] && cells[a] === cells[c];
+    });
+  }
+
+  restartBtn.onclick = createBoard;
+
+  nextBtn.onclick = () => {
+    location.href = "slide2.html";
+  };
+
+  createBoard();
+</script>
+
+</body>
+</html>
