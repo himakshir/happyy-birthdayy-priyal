@@ -1,56 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Slide 4</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
+:root{
+  --bg1:#ffe7ee;
+  --bg2:#ffd6e2;
+  --pink:#ff5f8f;
+  --text:#7a3b4a;
+}
+
 body{
   margin:0;
-  height:100vh;
+  min-height:100vh;
   display:flex;
+  align-items:center;
   justify-content:center;
-  align-items:flex-start;
-  background:linear-gradient(135deg,#ffe7ee,#ffd6e2);
-  font-family:Inter,sans-serif;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  font-family:Inter,system-ui,sans-serif;
+  color:var(--text);
+}
+
+.wrap{
+  width:100%;
+  max-width:420px;
   text-align:center;
+  padding:20px;
 }
 
-.container{
-  margin-top:120px;
-}
-
-h1{
+.title{
   font-family:'Playfair Display',serif;
-  font-size:32px;
-  color:#ff5f8f;
+  font-size:30px;
+  background:linear-gradient(135deg,#ff9fba,#ff5f8f);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.controls{
+  margin-top:40px;
 }
 
 button{
-  margin-top:40px;
-  padding:12px 28px;
   border:none;
-  border-radius:30px;
-  background:linear-gradient(135deg,#ff9fba,#ff5f8f);
-  color:white;
-  font-weight:600;
+  border-radius:999px;
+  padding:12px 30px;
+  font-weight:700;
   cursor:pointer;
+  color:#fff;
+  background:linear-gradient(135deg,#ff9fba,#ff5f8f);
+  box-shadow:0 12px 22px rgba(255,95,143,.35);
 }
 </style>
 </head>
 
 <body>
+<div class="wrap">
+  <div class="title">Are you ready??</div>
 
-<div class="container">
-  <h1>Are you ready??</h1>
-  <button onclick="go()">Let's Goo</button>
+  <div class="controls">
+    <button onclick="go()">Let's Goo</button>
+  </div>
 </div>
 
 <script>
 function go(){
-  window.location.href="slide5.html"; // change this to your surprise page
+  location.href="slide5.html";
 }
 </script>
 
