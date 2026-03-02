@@ -1,68 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Slide 2</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
-:root{
-  --bg1:#ffe7ee;
-  --bg2:#ffd6e2;
-  --pink:#ff5f8f;
-  --soft:#ffd0dc;
-  --text:#7a3b4a;
-}
-
 body{
   margin:0;
   min-height:100vh;
+  background:#d8c9c9;
   display:flex;
-  align-items:center;
   justify-content:center;
-  background:linear-gradient(135deg,var(--bg1),var(--bg2));
-  font-family:Inter,system-ui,sans-serif;
-  color:var(--text);
+  align-items:flex-start;
+  font-family:Inter,sans-serif;
+  color:#4b2c2c;
 }
 
 .wrap{
-  width:100%;
-  max-width:420px;
   text-align:center;
-  padding:20px;
+  margin-top:120px; /* slightly higher */
 }
 
-.title{
+h1{
   font-family:'Playfair Display',serif;
-  font-size:32px;
-  background:linear-gradient(135deg,#ff9fba,#ff5f8f);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
+  font-size:42px; /* slightly smaller */
+  font-weight:700;
 }
 
-.controls{
+h1 span{
+  color:#ff5f8f;
+}
+
+.subtitle{
+  margin-top:8px;
+  font-size:14px;
+  opacity:.8;
+}
+
+.card{
   margin-top:40px;
+  background:#e7d6d6;
+  padding:40px;
+  border-radius:30px;
+  width:520px;
+  box-shadow:0 25px 40px rgba(0,0,0,0.15);
 }
 
 button{
+  margin-top:30px;
+  padding:12px 28px;
   border:none;
-  border-radius:999px;
-  padding:12px 30px;
-  font-weight:700;
+  border-radius:30px;
+  background:linear-gradient(135deg,#f7a8bb,#ff5f8f);
+  color:white;
+  font-weight:600;
   cursor:pointer;
-  color:#fff;
-  background:linear-gradient(135deg,#ff9fba,#ff5f8f);
-  box-shadow:0 12px 22px rgba(255,95,143,.35);
 }
 </style>
 </head>
 
 <body>
-<div class="wrap">
-  <div class="title">It's your special day, yayyy!!!</div>
 
-  <div class="controls">
+<div class="wrap">
+  <h1>It's your <span>special day</span></h1>
+  <div class="subtitle">And I made something for you</div>
+
+  <div class="card">
     <button onclick="next()">Next</button>
   </div>
 </div>
