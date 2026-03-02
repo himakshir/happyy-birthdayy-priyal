@@ -1,278 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tic Tac Toe</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-  :root{
-    --bg1:#ffe7ee;
-    --bg2:#ffd6e2;
-    --panel:#ffffff;
-    --pink:#ff5f8f;
-    --soft:#ffd0dc;
-    --text:#7a3b4a;
-  }
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5e6ea;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
 
-  body{
-    margin:0;
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:linear-gradient(135deg, var(--bg1), var(--bg2));
-    font-family:Inter, system-ui, sans-serif;
-    color:var(--text);
-  }
+.container {
+    background: #f2d9df;
+    padding: 40px;
+    border-radius: 25px;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
 
-  .wrap{
-    width:100%;
-    max-width:420px;
-    text-align:center;
-    padding:20px;
-  }
+h1 {
+    margin-bottom: 20px;
+    color: #4b2c34;
+}
 
-  .title{
-    font-family:'Playfair Display', serif;
-    font-size:30px;
-    margin-bottom:6px;
-    background:linear-gradient(135deg,#ff9fba,#ff5f8f);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-  }
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    gap: 10px;
+    justify-content: center;
+}
 
-  .subtitle{
-    font-size:13px;
-    margin-bottom:14px;
-    opacity:.8;
-  }
+.cell {
+    width: 100px;
+    height: 100px;
+    background: white;
+    font-size: 40px;
+    font-weight: bold;
+    border-radius: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-  .board-wrap{
-    position:relative;
-    margin:0 auto 16px;
-    width:280px;
-  }
+.cell:hover {
+    background: #ffe6ec;
+}
 
-  .board{
-    background:#fff;
-    border-radius:20px;
-    padding:16px;
-    box-shadow:0 20px 40px rgba(0,0,0,.15);
-    display:grid;
-    grid-template-columns:repeat(3, 1fr);
-    gap:12px;
-  }
+#status {
+    margin-top: 20px;
+    font-weight: bold;
+}
 
-  .cell{
-    background:#fff;
-    border-radius:14px;
-    height:70px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:28px;
-    font-weight:800;
-    cursor:pointer;
-    box-shadow:0 8px 18px rgba(255,95,143,.25);
-    border:2px solid var(--soft);
-  }
-
-  .x{ color:#ff5f8f; }
-  .o{ color:#ff9fba; }
-
-  .line{
-    position:absolute;
-    height:6px;
-    background:#ff5f8f;
-    border-radius:6px;
-    transform-origin:0 50%;
-    display:none;
-  }
-
-  .win-text{
-    font-weight:700;
-    margin:10px 0;
-    display:none;
-    color:#ff5f8f;
-  }
-
-  .controls{
-    display:flex;
-    gap:12px;
-    justify-content:center;
-  }
-
-  button{
-    border:none;
-    border-radius:999px;
-    padding:10px 22px;
-    font-weight:700;
-    cursor:pointer;
-    color:#fff;
-    background:linear-gradient(135deg,#ff9fba,#ff5f8f);
-    box-shadow:0 12px 22px rgba(255,95,143,.35);
-  }
-
-  button[disabled]{
-    opacity:.5;
-    box-shadow:none;
-    cursor:not-allowed;
-  }
+button {
+    margin-top: 15px;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 20px;
+    background: #e78fa7;
+    color: white;
+    cursor: pointer;
+}
 </style>
 </head>
 <body>
 
-<div class="wrap">
-  <div class="title">Tic Tac Toe</div>
-  <div class="subtitle">Win to unlock the surprise 💖</div>
+<div class="container">
+    <h1>Tic Tac Toe</h1>
 
-  <div class="board-wrap">
     <div class="board" id="board"></div>
-    <div class="line" id="winLine"></div>
-  </div>
 
-  <div class="win-text" id="winText">You won! 🎉</div>
+    <div id="status">Your turn</div>
 
-  <div class="controls">
-    <button id="restart">Restart</button>
-    <button id="nextBtn" disabled>Next</button>
-  </div>
+    <button onclick="resetGame()">Restart</button>
 </div>
 
 <script>
-  const board = document.getElementById("board");
-  const winLine = document.getElementById("winLine");
-  const winText = document.getElementById("winText");
-  const nextBtn = document.getElementById("nextBtn");
-  const restartBtn = document.getElementById("restart");
+const board = document.getElementById("board");
+const statusText = document.getElementById("status");
 
-  let cells;
-  let gameOver;
-  let isPlayerTurn;
+let cells = [];
+let currentPlayer = "X";
+let gameActive = true;
 
-  const wins = [
-    [0,1,2],
-    [3,4,5],
-    [6,7,8],
-    [0,3,6],
-    [1,4,7],
-    [2,5,8],
-    [0,4,8],
-    [2,4,6]
-  ];
-
-  function createBoard(){
+function createBoard() {
     board.innerHTML = "";
-    cells = Array(9).fill("");
-    gameOver = false;
-    isPlayerTurn = true;
-    winLine.style.display = "none";
-    winText.style.display = "none";
-    nextBtn.disabled = true;
+    cells = [];
 
-    for(let i=0;i<9;i++){
-      const cell = document.createElement("div");
-      cell.className = "cell";
-      cell.onclick = () => playerMove(i, cell);
-      board.appendChild(cell);
+    for (let i = 0; i < 9; i++) {
+        const cell = document.createElement("div");
+        cell.classList.add("cell");
+        cell.dataset.index = i;
+        cell.addEventListener("click", handleClick);
+        board.appendChild(cell);
+        cells.push(cell);
     }
-  }
+}
 
-  function playerMove(i, cell){
-    if(!isPlayerTurn || cells[i] || gameOver) return;
+function handleClick(e) {
+    const cell = e.target;
 
-    isPlayerTurn = false;
-    cells[i] = "X";
+    if (cell.textContent !== "" || !gameActive) return;
+
     cell.textContent = "X";
-    cell.classList.add("x");
 
-    if(checkWin("X")) return;
+    if (checkWinner("X")) {
+        statusText.textContent = "You win!";
+        gameActive = false;
 
-    setTimeout(computerMove, 400);
-  }
+        setTimeout(() => {
+            window.location.href = "birthday.html";
+        }, 1500);
 
-  function computerMove(){
-    if(gameOver) return;
-
-    let empty = cells.map((v,i)=>v===""?i:null).filter(v=>v!==null);
-    if(empty.length === 0) return;
-
-    // Remove computer winning moves intentionally
-    empty = empty.filter(index => {
-      cells[index] = "O";
-      const win = checkTemporaryWin("O");
-      cells[index] = "";
-      return !win; // remove if it causes win
-    });
-
-    // If all remaining moves were winning moves (rare case), allow random
-    if(empty.length === 0){
-      empty = cells.map((v,i)=>v===""?i:null).filter(v=>v!==null);
+        return;
     }
 
-    const move = empty[Math.floor(Math.random()*empty.length)];
+    if (isDraw()) {
+        statusText.textContent = "Draw!";
+        gameActive = false;
+        return;
+    }
 
-    cells[move] = "O";
-    board.children[move].textContent = "O";
-    board.children[move].classList.add("o");
+    computerMove();
+}
 
-    // Still check win (in case forced)
-    if(checkWin("O")) return;
+function computerMove() {
+    let emptyCells = cells.filter(cell => cell.textContent === "");
 
-    isPlayerTurn = true;
-  }
+    if (emptyCells.length === 0) return;
 
-  function checkTemporaryWin(player){
-    return wins.some(([a,b,c]) =>
-      cells[a]===player && cells[b]===player && cells[c]===player
+    // 50% chance computer plays random instead of best move
+    let randomChance = Math.random();
+
+    let move;
+
+    if (randomChance < 0.5) {
+        // Random move (lets user win more often)
+        move = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+    } else {
+        // Try to win or block
+        move = findBestMove("O") || findBestMove("X") || emptyCells[0];
+    }
+
+    move.textContent = "O";
+
+    if (checkWinner("O")) {
+        statusText.textContent = "Computer wins!";
+        gameActive = false;
+        return;
+    }
+
+    if (isDraw()) {
+        statusText.textContent = "Draw!";
+        gameActive = false;
+        return;
+    }
+}
+
+function findBestMove(player) {
+    const winPatterns = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+    ];
+
+    for (let pattern of winPatterns) {
+        let values = pattern.map(i => cells[i].textContent);
+
+        if (values.filter(v => v === player).length === 2 &&
+            values.includes("")) {
+
+            let emptyIndex = pattern[values.indexOf("")];
+            return cells[emptyIndex];
+        }
+    }
+
+    return null;
+}
+
+function checkWinner(player) {
+    const winPatterns = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+    ];
+
+    return winPatterns.some(pattern =>
+        pattern.every(index =>
+            cells[index].textContent === player
+        )
     );
-  }
+}
 
-  function checkWin(player){
-    for(const combo of wins){
-      const [a,b,c] = combo;
+function isDraw() {
+    return cells.every(cell => cell.textContent !== "");
+}
 
-      if(cells[a]===player && cells[b]===player && cells[c]===player){
-        gameOver = true;
-        drawLineBetween(a, c);
-        winText.style.display = "block";
-        nextBtn.disabled = false;
-        return true;
-      }
-    }
-    return false;
-  }
+function resetGame() {
+    gameActive = true;
+    statusText.textContent = "Your turn";
+    createBoard();
+}
 
-  function drawLineBetween(startIndex, endIndex){
-    const startCell = board.children[startIndex];
-    const endCell = board.children[endIndex];
-
-    const boardRect = board.getBoundingClientRect();
-    const startRect = startCell.getBoundingClientRect();
-    const endRect = endCell.getBoundingClientRect();
-
-    const startX = startRect.left + startRect.width/2 - boardRect.left;
-    const startY = startRect.top + startRect.height/2 - boardRect.top;
-
-    const endX = endRect.left + endRect.width/2 - boardRect.left;
-    const endY = endRect.top + endRect.height/2 - boardRect.top;
-
-    const length = Math.hypot(endX - startX, endY - startY);
-    const angle = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI;
-
-    winLine.style.display = "block";
-    winLine.style.width = length + "px";
-    winLine.style.left = startX + "px";
-    winLine.style.top = startY + "px";
-    winLine.style.transform = `rotate(${angle}deg)`;
-  }
-
-  restartBtn.onclick = createBoard;
-  nextBtn.onclick = () => location.href = "slide2.html";
-
-  createBoard();
+createBoard();
 </script>
 
 </body>
